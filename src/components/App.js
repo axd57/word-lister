@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import axios from 'axios'
+import moment from 'moment';
 
 import Header from './Header';
 import DbInfos from './DbInfos';
@@ -24,7 +25,13 @@ class App extends Component{
                 tr: "tr",
                 searchCount: 0
             },
-            wordIsAlreadyExist: false
+            wordIsAlreadyExist: false,
+            latesUpdatedTime: "never",
+            serverErrorStatus:{
+                error: false,
+                errorStatus: "",
+                errorData:""
+            }
         }
         
     }
@@ -32,24 +39,47 @@ class App extends Component{
     //App strarted
     componentDidMount(){ 
         const db=JSON.parse(localStorage.getItem('wldb'));
-
+        
         if(db){
+            db.sort((a,b) => (a.en > b.en) ? 1 : ((b.en > a.en) ? -1 : 0));
             this.setState({
                 words:db
             });
+
+            console.log("---------Db fetched---------");
         }
         
-        console.log("---------Db fetched---------");
+        this.tick();
         
+        this.intervalID = setInterval(
+            () => this.tick(),
+            1000
+        );
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.intervalID);
     }
 
     componentDidUpdate(prevProps, prevState){ 
-        //if(prevState.words.length != this.state.words.length){
+        if(prevState.words != this.state.words){
             localStorage.setItem('wldb', JSON.stringify(this.state.words));
+            
             console.log("---------Db changed---------");
-        //}
+        }
     }
     
+    tick() {
+        const timeDifference= moment(JSON.parse(localStorage.getItem('dblud'))).fromNow();
+        
+        if(timeDifference != "Invalid date"){
+            this.setState({
+                latesUpdatedTime: timeDifference
+            });
+        }
+    }
+
+
     
     //Word translation
     translateWord(word){
@@ -64,6 +94,10 @@ class App extends Component{
         else{
             axios.post(`https://libretranslate.de/translate`, {q: word, source: "en", target:"tr"}).then((response) => {
             this.setState(Object.assign(this.state.word, {en:word, tr:response.data.translatedText, searchCount: 1}));
+            
+            this.setState(Object.assign(this.state.serverErrorStatus, {error:false, errorStatus:"", errorData:""}));
+            }).catch((error) => {
+                this.setState(Object.assign(this.state.serverErrorStatus, {error:true, errorStatus:error.response.status, errorData:error.response.data.error}));
             });
 
             this.setState({wordIsAlreadyExist: false});
@@ -79,8 +113,13 @@ class App extends Component{
         let wordIndex = this.state.words.findIndex((obj => obj.en === wordObject.en));
         
         if(wordIndex==-1){
+            const tmpArr= [...this.state.words];
+            tmpArr.push(wordObject);
+            tmpArr.sort((a,b) => (a.en > b.en) ? 1 : ((b.en > a.en) ? -1 : 0));
+            
             this.setState(prevState => ({
-                words: [...prevState.words, {en: wordObject.en, tr: wordObject.tr, searchCount: wordObject.searchCount}]
+                //words: [...prevState.words, {en: wordObject.en, tr: wordObject.tr, searchCount: wordObject.searchCount}]
+                words: tmpArr
             }));
     
             console.log("---------Word added---------");
@@ -93,18 +132,23 @@ class App extends Component{
             console.log("---------Word updated---------");
         }
         
-        
+        localStorage.setItem('dblud', JSON.stringify(moment().format("YYYY-MM-DD HH:mm:ss")));
+        this.tick();
     }
 
     deleteWord(wordIndex){
         const tmpArr= [...this.state.words];
         tmpArr.splice(wordIndex, 1);
+        tmpArr.sort((a,b) => (a.en > b.en) ? 1 : ((b.en > a.en) ? -1 : 0));
         
         this.setState(prevState => ({
-            words:  tmpArr
+            words: tmpArr
         }));
         
         console.log("---------Word deleted---------");
+
+        localStorage.setItem('dblud', JSON.stringify(moment().format("YYYY-MM-DD HH:mm:ss")));
+        this.tick();
     }
 
 
@@ -116,10 +160,10 @@ class App extends Component{
         return(
             <div className="container">
                 <Header/>
-                <DbInfos getWordCount={this.state.words.length}/>
-                <SearchBox translateWord={this.translateWord} translatedWord={this.state.word} saveAndUpdateWord={this.saveAndUpdateWord} currentWordExistingStatus={this.state.wordIsAlreadyExist}/>
+                <DbInfos getWordCount={this.state.words.length} getLatesUpdatedTime={this.state.latesUpdatedTime}/>
+                <SearchBox translateWord={this.translateWord} translatedWord={this.state.word} saveAndUpdateWord={this.saveAndUpdateWord} currentWordExistingStatus={this.state.wordIsAlreadyExist} errorCheck={this.state.serverErrorStatus}/>
                 <WordContainer getAllWords={this.state.words} deleteWord={this.deleteWord}/>
-                <SearchInfos/>
+                <SearchInfos getAllWords={this.state.words}/>
             </div>
         );
     }

@@ -1,17 +1,20 @@
 import React, {  Fragment } from 'react'
+import LeastSearchedsWordBox from './LeastSearchedsWordBox';
+import MostSearchedsWordBox from './MostSearchedsWordBox';
 
-const SearchInfos= () => {
+const SearchInfos= ({getAllWords}) => {
+    const tmpArr=[...getAllWords];
+    const lSA=tmpArr.sort((a,b) => (a.searchCount > b.searchCount) ? 1 : ((b.searchCount > a.searchCount) ? -1 : 0)).slice(0, 5);
+    const mSA=tmpArr.sort((a,b) => (a.searchCount > b.searchCount) ? -1 : ((b.searchCount > a.searchCount) ? 1 : 0)).slice(0, 5);
+    
     return (
         <Fragment>
             <div className="card bg-danger mb-3" style={{marginTop: "35px"}}>
                 <div className="card-header text-white"><i className="fas fa-info-circle"></i> Least Searcheds (Top 5)</div>
                 <div className="card-body" style={{overflow: "auto", whiteSpace: "nowrap"}}>
-
-                    <div className="card m-2" style={{display: "inline-block"}}>
-                        <div className="card-body" style={{textAlign: "center"}}>
-                            <a href="#" style={{textDecoration: "none"}}> <span className="badge bg-primary" style={{padding: "10px", fontSize: "15px"}}> <i className="far fa-play-circle"></i> Cat</span> </a>  : <span className="badge bg-primary" style={{padding: "10px", fontSize: "15px"}}>Kedi</span> <br/> <span className="badge bg-danger"><i className="fas fa-history"></i> 5</span>
-                        </div>
-                    </div>
+                    {
+                        lSA.map((word, index)=><LeastSearchedsWordBox key={index} word={word}/>)
+                    }
                     
                 </div>
             </div>
@@ -19,17 +22,11 @@ const SearchInfos= () => {
             <div className="card bg-primary mb-3">
                 <div className="card-header text-white"><i className="fas fa-info-circle"></i> Most Searcheds (Top 5)</div>
                 <div className="card-body" style={{overflow: "auto", whiteSpace: "nowrap"}}>
-
-                    <div className="card m-2" style={{display: "inline-block"}}>
-                        <div className="card-body" style={{textAlign: "center"}}>
-                            <a href="#" style={{textDecoration: "none"}}> <span className="badge bg-primary" style={{padding: "10px", fontSize: "15px"}}> <i className="far fa-play-circle"></i> Cat</span> </a>  : <span className="badge bg-primary" style={{padding: "10px", fontSize: "15px"}}>Kedi</span> <br/> <span className="badge bg-danger"><i className="fas fa-history"></i> 5</span>
-                        </div>
-                    </div>
-
+                    {
+                        mSA.map((word, index)=><MostSearchedsWordBox key={index} word={word}/>)
+                    }
                 </div>
             </div>
-
-
         </Fragment>
     )
 }
