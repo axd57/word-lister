@@ -1,6 +1,6 @@
 # Word Lister
 
-live demo: https://wordlister.netlify.app/
+Live Demo: https://wordlister.netlify.app/
 
 ## Used Tools
 - React.js
