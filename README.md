@@ -7,3 +7,5 @@ Live Demo: https://wordlister.netlify.app/
 - Node.js
 - Babel
 - Webpack
+- axios
+- Bootstrap
