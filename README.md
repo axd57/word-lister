@@ -9,3 +9,7 @@ Live Demo: https://wordlister.netlify.app/
 - Webpack
 - axios
 - Bootstrap
+
+## License
+MIT
+
