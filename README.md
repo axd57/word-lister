@@ -25,9 +25,9 @@ npm run start-wps
 ```
 
 ## Features
-- Automatic and manual translation feature.
+- Automatic and manual translation.
 - Showing latest user update time.
-- Word pronunciation feature for english words.
+- Word pronunciation for english words.
 - Most searched and least searched words listing.
 
 ## License
