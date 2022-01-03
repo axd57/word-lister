@@ -24,7 +24,11 @@ npm install
 npm run start-wps
 ```
 
-
+## Features
+- Automatic and manual translation feature.
+- Showing latest user update time.
+- Word pronunciation feature for english words.
+- Most searched and least searched words listing.
 
 ## License
 MIT
