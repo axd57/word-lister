@@ -3,10 +3,9 @@
   <img src="./logo.png" width="45%"/> 
 </p>
 
+> **Live project**: https://wordlister.netlify.app/
 
-
-
-Live Demo: https://wordlister.netlify.app/
+Word listing app for english word learning.
 
 ## Used Tools
 - React.js
@@ -15,6 +14,17 @@ Live Demo: https://wordlister.netlify.app/
 - Webpack
 - axios
 - Bootstrap
+
+## Quick Installation
+```
+npm install
+```
+## Run Project
+```
+npm run start-wps
+```
+
+
 
 ## License
 MIT
