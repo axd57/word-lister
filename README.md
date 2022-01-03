@@ -1,4 +1,10 @@
 # Word Lister
+<p align="center">
+  <img src="./logo.png" width="45%"/> 
+</p>
+
+
+
 
 Live Demo: https://wordlister.netlify.app/
 
